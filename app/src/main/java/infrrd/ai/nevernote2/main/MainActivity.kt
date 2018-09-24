@@ -18,12 +18,14 @@ import infrrd.ai.nevernote2.adapters.NotesAdapter
 import infrrd.ai.nevernote2.base.BaseActivity
 import infrrd.ai.nevernote2.contextactionbar.ActionBarCallBack
 import infrrd.ai.nevernote2.models.Note
+import infrrd.ai.nevernote2.newnote.NewNoteActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity: BaseActivity(), NotesAdapter.ActionBarCallback, SearchView.OnQueryTextListener,
         ActionBarCallBack.OnDeleteSelectionListener, MainView {
 
     override val baseActivityContext: Context = baseContext
+    override val mainActivity: Activity = this
     private val presenter = MainPresenter(this, MainInteractor())
     override var actionMode: ActionMode? = null
     private lateinit var sampleVariable:String
@@ -36,7 +38,7 @@ class MainActivity: BaseActivity(), NotesAdapter.ActionBarCallback, SearchView.O
     private lateinit var imageUri: Uri
     val editNote = {
         position:Int, note:Note ->
-        val intent = Intent(this, NewNote::class.java)
+        val intent = Intent(this, NewNoteActivity::class.java)
         intent.putExtra("Title",note.title)
         intent.putExtra("Body",note.body)
         intent.putExtra("Position",position)
@@ -72,10 +74,6 @@ class MainActivity: BaseActivity(), NotesAdapter.ActionBarCallback, SearchView.O
             note_actions.collapse()
             presenter.cameraClicked()
         }
-        NotesServiceLayer().getallnotes {
-            notesDataset.addAll(it)
-            viewAdapter.notifyDataSetChanged()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -98,19 +96,16 @@ class MainActivity: BaseActivity(), NotesAdapter.ActionBarCallback, SearchView.O
                     var position:Int? = data?.getIntExtra("Position",-1)
 
                     if(position == -1) {
-                        Log.d("inside if","lolol")
                         notesDataset.add(0,new_note)
                         viewAdapter.notifyItemInserted(0)
 
                     }
                     else {
-                        Log.d("inside else","lolol")
                         position?.let {
                             notesDataset.removeAt(position)
                             notesDataset.add(position,new_note)
                             viewAdapter.notifyItemChanged(position)
                         }
-
                     }
 
                 }

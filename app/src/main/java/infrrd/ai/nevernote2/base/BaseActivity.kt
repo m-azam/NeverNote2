@@ -49,7 +49,6 @@ abstract class BaseActivity: AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.sort -> {
-                Toast.makeText(this, "sort button is clicked", Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.settings -> {
@@ -74,10 +73,8 @@ abstract class BaseActivity: AppCompatActivity(), NavigationView.OnNavigationIte
                 presenter.trashClicked()
             }
             R.id.completed -> {
-                Toast.makeText(this, "completed button clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.all_notes -> {
-                Toast.makeText(this, "all_notes button clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.sign_out -> {
                 presenter.signOutClicked()

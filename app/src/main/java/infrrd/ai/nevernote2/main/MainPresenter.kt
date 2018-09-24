@@ -14,7 +14,7 @@ import java.io.File
 class MainPresenter(private val mainView: MainView, val mainInteractor: MainInteractor) {
 
     fun textButtonClicked() {
-        mainInteractor.openNewNoteActivity(mainView.mainActivityContext as Activity)
+        mainInteractor.openNewNoteActivity(mainView.mainActivity)
     }
 
     fun audioButtonClicked() {
@@ -26,30 +26,29 @@ class MainPresenter(private val mainView: MainView, val mainInteractor: MainInte
     }
 
     private fun takePicture() {
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])
-                || ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[1])) {
-            val uri = Uri.fromParts("package", this.packageName, null)
+        if(ActivityCompat.shouldShowRequestPermissionRationale(mainView.mainActivity, mainInteractor.permissions[0])
+                || ActivityCompat.shouldShowRequestPermissionRationale(mainView.mainActivity, mainInteractor.permissions[1])) {
+            val uri = Uri.fromParts("package", mainView.mainActivityContext.packageName, null)
             mainInteractor.openSettings(mainView.mainActivityContext, uri)
         }
         else {
             if (checkPermissions()) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 val photo = File(Environment.getExternalStorageDirectory(), "Pic.jpg")
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        FileProvider.getUriForFile(this,
-                                BuildConfig.APPLICATION_ID + ".provider", photo))
-                imageUri = FileProvider.getUriForFile(this,
-                        BuildConfig.APPLICATION_ID + ".provider", photo)
-                startActivityForResult(intent, 1)
+                mainInteractor.openCamera(mainView.mainActivityContext, mainView.mainActivity, photo)
             } else {
                 getPermission()
             }
         }
     }
 
+    private fun getPermission() {
+        ActivityCompat.requestPermissions(mainView.mainActivity, mainInteractor.permissions
+                , 1)
+    }
+
     private fun checkPermissions(): Boolean {
         for (permission in mainInteractor.permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(mainView.mainActivityContext, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
