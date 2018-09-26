@@ -6,4 +6,5 @@ import android.content.Context
 interface MainView {
     val mainActivityContext: Context
     val mainActivity: Activity
+    fun noteActionVisibilityToggle(setVisibility: Boolean)
 }
